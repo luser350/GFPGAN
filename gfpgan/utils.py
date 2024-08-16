@@ -152,13 +152,12 @@ class GFPGANer():
         img_t = img2tensor(img / 255., bgr2rgb=True, float32=True)
         normalize(img_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
         img_t = img_t.unsqueeze(0).to(self.device)
-
         try:
             output = self.gfpgan(img_t, return_rgb=False, weight=weight)[0]
             # convert to image
             restored_img = tensor2img(output.squeeze(0), rgb2bgr=True, min_max=(-1, 1))
         except RuntimeError as error:
             print(f'\tFailed inference for GFPGAN: {error}.')
-            sys.exit(0)
+            return None
         restored_img = restored_img.astype('uint8')
         return restored_img
